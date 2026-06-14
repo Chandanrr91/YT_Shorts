@@ -1,0 +1,13 @@
+# Royalty-free background music — one direct .mp3 URL per line.
+# Lines starting with # are ignored. Run:  python3 scripts/fetch_music.py
+#
+# Best sources (copy a track's direct download .mp3 link here):
+#   Pixabay Music        https://pixabay.com/music/      (no attribution required)
+#   YouTube Audio Library (YouTube Studio)               (download manually -> assets/music/)
+#   Free Music Archive   https://freemusicarchive.org/   (check each license)
+#   Incompetech          https://incompetech.com/        (CC-BY — must credit the artist)
+#
+# Pick CALM / UPBEAT / AMBIENT instrumental tracks — no vocals (they fight the voiceover).
+#
+# Example (replace with real URLs you've chosen):
+# https://cdn.pixabay.com/download/audio/2022/03/15/audio_example.mp3

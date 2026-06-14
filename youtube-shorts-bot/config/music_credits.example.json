@@ -1,0 +1,5 @@
+{
+  "__comment__": "Map each music FILENAME (as it sits in assets/music/) to its required attribution string. Copy this file to config/music_credits.json and edit. ONLY list tracks that REQUIRE attribution (e.g. CC-BY / Incompetech). Omit CC0 / Pixabay tracks — they need no credit. If a track isn't listed here, no music credit is added to the description.",
+  "sunny-morning.mp3": "\"Sunny Morning\" by Kevin MacLeod (incompetech.com), licensed under CC BY 4.0 — https://creativecommons.org/licenses/by/4.0/",
+  "gentle-uplift.mp3": "\"Gentle Uplift\" by Artist Name, Free Music Archive, CC BY 4.0"
+}
