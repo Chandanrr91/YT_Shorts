@@ -3,9 +3,9 @@ anthropic>=0.92.0          # Claude API — rewrites facts into short-form scrip
 requests>=2.31.0           # HTTP for fact sources + stock media
 
 # Video / audio assembly
-moviepy>=1.0.3,<2.0        # composites clips, captions, audio (wraps ffmpeg). Pinned <2.0: 2.x removed moviepy.editor and renamed the API this code uses.
+moviepy>=2.0.0            # composites clips, captions, audio (wraps ffmpeg). media.py targets the 2.x API.
 gTTS>=2.5.1                # free Google text-to-speech voiceover
-Pillow>=10.0.0             # caption rendering
+Pillow>=10.0.0             # caption rendering (moviepy 2.x renders TextClip via Pillow — no ImageMagick).
 
 # YouTube upload (human-in-the-loop: builds the upload, you click publish)
 google-api-python-client>=2.0.0
