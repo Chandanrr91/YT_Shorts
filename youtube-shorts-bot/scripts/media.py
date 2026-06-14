@@ -5,7 +5,8 @@ Media assembly:
   - burned-in captions
   - composited into a 9:16 MP4 sized for YouTube Shorts
 
-Requires ffmpeg on PATH (moviepy wraps it). Install: brew install ffmpeg
+Targets moviepy 2.x (TextClip renders via Pillow — no ImageMagick needed).
+Requires ffmpeg on PATH (moviepy wraps it). Install: apt install ffmpeg / brew install ffmpeg
 """
 
 import os
@@ -18,7 +19,7 @@ sys.path.insert(0, __file__.rsplit("/scripts/", 1)[0])
 from config import settings  # noqa: E402
 
 from gtts import gTTS  # noqa: E402
-from moviepy.editor import (  # noqa: E402
+from moviepy import (  # noqa: E402  (moviepy 2.x: import from package root, not moviepy.editor)
     AudioFileClip,
     ColorClip,
     CompositeVideoClip,
@@ -26,6 +27,27 @@ from moviepy.editor import (  # noqa: E402
     VideoFileClip,
     concatenate_videoclips,
 )
+
+
+# A TextClip in moviepy 2.x requires an explicit font file path. Pick the first
+# that exists; allow an override via settings.CAPTION_FONT.
+_FONT_CANDIDATES = [
+    getattr(settings, "CAPTION_FONT", None),
+    "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf",  # Ubuntu (apt install fonts-dejavu)
+    "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
+    "/System/Library/Fonts/Supplemental/Arial Bold.ttf",     # macOS
+    "/System/Library/Fonts/Helvetica.ttc",
+]
+
+
+def _resolve_font():
+    for path in _FONT_CANDIDATES:
+        if path and os.path.exists(path):
+            return path
+    raise RuntimeError(
+        "No caption font found. Install one (Ubuntu: `sudo apt install fonts-dejavu`) "
+        "or set CAPTION_FONT in config/settings.py to a .ttf path."
+    )
 
 
 def synthesize_voiceover(narration, out_path):
@@ -79,11 +101,11 @@ def _background_clip(search_terms, duration, workdir):
     raw = fetch_background_video(search_terms, duration, os.path.join(workdir, "bg.mp4"))
     if raw:
         clip = VideoFileClip(raw).without_audio()
-        # crop/scale to fill 9:16
-        clip = clip.resize(height=settings.VIDEO_HEIGHT)
+        # crop/scale to fill 9:16 (moviepy 2.x: resized / cropped / subclipped)
+        clip = clip.resized(height=settings.VIDEO_HEIGHT)
         if clip.w < settings.VIDEO_WIDTH:
-            clip = clip.resize(width=settings.VIDEO_WIDTH)
-        clip = clip.crop(
+            clip = clip.resized(width=settings.VIDEO_WIDTH)
+        clip = clip.cropped(
             x_center=clip.w / 2, y_center=clip.h / 2,
             width=settings.VIDEO_WIDTH, height=settings.VIDEO_HEIGHT,
         )
@@ -91,7 +113,7 @@ def _background_clip(search_terms, duration, workdir):
         if clip.duration < duration:
             n = int(duration / clip.duration) + 1
             clip = concatenate_videoclips([clip] * n)
-        return clip.subclip(0, duration)
+        return clip.subclipped(0, duration)
 
     # fallback: solid dark teal background (calm, readable)
     return ColorClip(size=size, color=(18, 46, 56), duration=duration)
@@ -101,23 +123,25 @@ def _caption_clips(captions, duration):
     """Evenly time captions across the video, centered, with a readable stroke."""
     if not captions:
         return []
+    font = _resolve_font()
     each = duration / len(captions)
     clips = []
     for i, line in enumerate(captions):
         txt = TextClip(
-            line,
-            fontsize=80,
+            font=font,
+            text=line,
+            font_size=80,
             color="white",
             stroke_color="black",
             stroke_width=3,
             method="caption",
             size=(int(settings.VIDEO_WIDTH * 0.85), None),
-            align="center",
+            text_align="center",
         )
         txt = (
-            txt.set_start(i * each)
-            .set_duration(each)
-            .set_position(("center", "center"))
+            txt.with_start(i * each)
+            .with_duration(each)
+            .with_position(("center", "center"))
         )
         clips.append(txt)
     return clips
@@ -135,9 +159,9 @@ def assemble(script, out_path):
         background = _background_clip(script["search_terms"], duration, workdir)
         captions = _caption_clips(script["captions"], duration)
 
-        # 3. composite
+        # 3. composite (moviepy 2.x: with_audio / with_duration)
         video = CompositeVideoClip([background, *captions], size=(settings.VIDEO_WIDTH, settings.VIDEO_HEIGHT))
-        video = video.set_audio(voice).set_duration(duration)
+        video = video.with_audio(voice).with_duration(duration)
 
         os.makedirs(os.path.dirname(out_path), exist_ok=True)
         video.write_videofile(
