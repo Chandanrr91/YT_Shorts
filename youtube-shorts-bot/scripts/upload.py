@@ -37,7 +37,19 @@ def _get_credentials():
                     "client secret (Desktop app) from Google Cloud Console and save it there."
                 )
             flow = InstalledAppFlow.from_client_secrets_file(settings.YOUTUBE_CLIENT_SECRETS, SCOPES)
-            creds = flow.run_local_server(port=0)
+            # Headless-friendly: bind to a FIXED port and DON'T try to open a browser
+            # (EC2 has none). The auth URL is printed; open it in a browser that can
+            # reach this port. On EC2, set up an SSH tunnel from your laptop first:
+            #     ssh -i KEY -L 8765:localhost:8765 ubuntu@<EC2_IP>
+            # then open the printed URL in your laptop browser. The OAuth redirect to
+            # http://localhost:8765/ tunnels back to this server and completes the flow.
+            print(
+                "\n[upload] Open the URL below in a browser that can reach localhost:8765.\n"
+                "         (Headless EC2? First run on your laptop:\n"
+                "            ssh -i KEY -L 8765:localhost:8765 ubuntu@<EC2_IP>\n"
+                "          then open the URL in your laptop's browser.)\n"
+            )
+            creds = flow.run_local_server(port=8765, open_browser=False)
         with open(settings.YOUTUBE_TOKEN_FILE, "w") as fh:
             fh.write(creds.to_json())
     return creds
