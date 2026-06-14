@@ -102,6 +102,14 @@ SCRIPT_SCHEMA = {
 }
 
 
+def _supports_adaptive_thinking(model):
+    """Haiku does not support adaptive thinking; Opus 4.6+/Sonnet 4.6/Fable do."""
+    m = model.lower()
+    if "haiku" in m:
+        return False
+    return any(tag in m for tag in ("opus-4-6", "opus-4-7", "opus-4-8", "sonnet-4-6", "fable", "mythos"))
+
+
 def build_script(raw_fact, source_url):
     """Use Claude to turn a raw fact into a structured short-form script."""
     client = anthropic.Anthropic(api_key=settings.ANTHROPIC_API_KEY)
@@ -118,10 +126,9 @@ def build_script(raw_fact, source_url):
         "- Keep narration spoken-word natural (it will be read by text-to-speech)."
     )
 
-    response = client.messages.create(
+    kwargs = dict(
         model=settings.CLAUDE_MODEL,
         max_tokens=2000,
-        thinking={"type": "adaptive"},
         system=system,
         messages=[
             {
@@ -137,6 +144,13 @@ def build_script(raw_fact, source_url):
             "format": {"type": "json_schema", "schema": SCRIPT_SCHEMA}
         },
     )
+
+    # Adaptive thinking is only supported on Opus 4.6+/Sonnet 4.6/Fable models —
+    # NOT on Haiku. Only send it when the configured model supports it.
+    if _supports_adaptive_thinking(settings.CLAUDE_MODEL):
+        kwargs["thinking"] = {"type": "adaptive"}
+
+    response = client.messages.create(**kwargs)
 
     text = next(b.text for b in response.content if b.type == "text")
     script = json.loads(text)
