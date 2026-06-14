@@ -206,7 +206,7 @@ def _background(search_terms, duration, workdir):
 # ---------------------------------------------------------------------------
 # Subtitles
 # ---------------------------------------------------------------------------
-def _chunk_narration(narration, max_words=5):
+def _chunk_narration(narration, max_words=3):
     """Split narration into short subtitle phrases (<= max_words each)."""
     import re
 
@@ -235,12 +235,12 @@ def _caption_clips(narration, duration, font):
         txt = TextClip(
             font=font,
             text=phrase,
-            font_size=78,
+            font_size=58,
             color="white",
             stroke_color="black",
-            stroke_width=4,
+            stroke_width=3,
             method="caption",
-            size=(int(settings.VIDEO_WIDTH * 0.82), None),
+            size=(int(settings.VIDEO_WIDTH * 0.80), None),
             text_align="center",
         )
         txt = (
@@ -262,18 +262,18 @@ def _title_card(title, font):
     card = TextClip(
         font=font,
         text=title,
-        font_size=92,
+        font_size=62,
         color="white",
         stroke_color="black",
-        stroke_width=5,
+        stroke_width=3,
         method="caption",
-        size=(int(settings.VIDEO_WIDTH * 0.86), None),
+        size=(int(settings.VIDEO_WIDTH * 0.80), None),
         text_align="center",
     )
     card = (
         card.with_start(0)
         .with_duration(2.5)
-        .with_position(("center", int(settings.VIDEO_HEIGHT * 0.30)))
+        .with_position(("center", int(settings.VIDEO_HEIGHT * 0.28)))
     )
     return [card]
 
