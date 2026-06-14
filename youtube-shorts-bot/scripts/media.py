@@ -1,6 +1,6 @@
 """
 Media assembly:
-  - voiceover via ElevenLabs (natural) with gTTS fallback (free, robotic)
+  - voiceover via gTTS (free Google text-to-speech)
   - dynamic visuals: several rotating vertical stock clips with a slow Ken Burns
     zoom, an optional title card, and time-synced English subtitles
   - optional royalty-free background music mixed quietly under the voice
@@ -61,41 +61,7 @@ def _resolve_font():
 # Voiceover
 # ---------------------------------------------------------------------------
 def synthesize_voiceover(narration, out_path):
-    """Render narration to MP3. Prefer ElevenLabs; fall back to gTTS on any issue."""
-    provider = getattr(settings, "TTS_PROVIDER", "gtts").lower()
-    if provider == "elevenlabs" and settings.ELEVENLABS_API_KEY:
-        try:
-            return _elevenlabs_tts(narration, out_path)
-        except Exception as e:  # network, quota, auth, missing lib — degrade gracefully
-            print(f"  ! ElevenLabs failed ({e}); falling back to gTTS", file=sys.stderr)
-    return _gtts_tts(narration, out_path)
-
-
-def _elevenlabs_tts(narration, out_path):
-    """Natural voice via ElevenLabs REST API (no SDK dependency needed)."""
-    url = f"https://api.elevenlabs.io/v1/text-to-speech/{settings.ELEVENLABS_VOICE_ID}"
-    r = requests.post(
-        url,
-        headers={
-            "xi-api-key": settings.ELEVENLABS_API_KEY,
-            "accept": "audio/mpeg",
-            "content-type": "application/json",
-        },
-        json={
-            "text": narration,
-            "model_id": settings.ELEVENLABS_MODEL,
-            "voice_settings": {"stability": 0.5, "similarity_boost": 0.75},
-        },
-        timeout=60,
-    )
-    r.raise_for_status()
-    with open(out_path, "wb") as fh:
-        fh.write(r.content)
-    print("[media] voiceover: ElevenLabs")
-    return out_path
-
-
-def _gtts_tts(narration, out_path):
+    """Render narration to MP3 using gTTS (free Google text-to-speech)."""
     gTTS(text=narration, lang="en", slow=False).save(out_path)
     print("[media] voiceover: gTTS")
     return out_path
