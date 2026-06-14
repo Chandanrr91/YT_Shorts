@@ -150,10 +150,14 @@ def _caption_clips(captions, duration):
 def assemble(script, out_path):
     """Build the final MP4 from a script dict. Returns out_path."""
     with tempfile.TemporaryDirectory() as workdir:
-        # 1. voiceover defines the video length
+        # 1. voiceover defines the video length. Clamp duration to the audio so
+        #    ffmpeg never reads an audio frame past the clip's end, and to MAX.
         vo_path = synthesize_voiceover(script["narration"], os.path.join(workdir, "vo.mp3"))
         voice = AudioFileClip(vo_path)
-        duration = min(voice.duration + 0.6, settings.MAX_DURATION_SECONDS)
+        # shave a small epsilon so the timeline ends just inside the audio
+        # (avoids ffmpeg reading one frame past the clip end at the boundary).
+        duration = min(voice.duration - 0.05, settings.MAX_DURATION_SECONDS)
+        voice = voice.subclipped(0, duration)
 
         # 2. background + captions
         background = _background_clip(script["search_terms"], duration, workdir)
