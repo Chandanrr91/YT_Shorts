@@ -1,0 +1,13 @@
+# Core
+anthropic>=0.92.0          # Claude API — rewrites facts into short-form scripts
+requests>=2.31.0           # HTTP for fact sources + stock media
+
+# Video / audio assembly
+moviepy>=1.0.3             # composites clips, captions, audio (wraps ffmpeg)
+gTTS>=2.5.1                # free Google text-to-speech voiceover
+Pillow>=10.0.0             # caption rendering
+
+# YouTube upload (human-in-the-loop: builds the upload, you click publish)
+google-api-python-client>=2.0.0
+google-auth-oauthlib>=1.0.0
+google-auth-httplib2>=0.2.0
