@@ -34,13 +34,6 @@ MAX_DURATION_SECONDS = 30   # hard cap — videos are trimmed to this length
 TARGET_DURATION_SECONDS = 25  # aim point for narration length (20-30s sweet spot)
 FPS = 30
 
-# --- Voice (TTS) ---
-# "elevenlabs" for natural AI voice (needs ELEVENLABS_API_KEY), else "gtts" (free, robotic).
-TTS_PROVIDER = os.environ.get("TTS_PROVIDER", "elevenlabs")
-ELEVENLABS_API_KEY = os.environ.get("ELEVENLABS_API_KEY", "")
-ELEVENLABS_VOICE_ID = os.environ.get("ELEVENLABS_VOICE_ID", "21m00Tcm4TlvDq8ikWAM")
-ELEVENLABS_MODEL = "eleven_multilingual_v2"
-
 # --- Background music (optional) — drop royalty-free .mp3s into assets/music/ ---
 ENABLE_MUSIC = True
 MUSIC_VOLUME = 0.12
