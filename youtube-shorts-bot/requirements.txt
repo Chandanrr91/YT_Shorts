@@ -3,7 +3,7 @@ anthropic>=0.92.0          # Claude API — rewrites facts into short-form scrip
 requests>=2.31.0           # HTTP for fact sources + stock media
 
 # Video / audio assembly
-moviepy>=1.0.3             # composites clips, captions, audio (wraps ffmpeg)
+moviepy>=1.0.3,<2.0        # composites clips, captions, audio (wraps ffmpeg). Pinned <2.0: 2.x removed moviepy.editor and renamed the API this code uses.
 gTTS>=2.5.1                # free Google text-to-speech voiceover
 Pillow>=10.0.0             # caption rendering
 
