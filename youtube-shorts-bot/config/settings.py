@@ -9,7 +9,7 @@ import os
 # Get a key at https://console.anthropic.com — or run `ant auth login`.
 # Leaving this as None makes the SDK read ANTHROPIC_API_KEY from the env.
 ANTHROPIC_API_KEY = os.environ.get("ANTHROPIC_API_KEY")
-CLAUDE_MODEL = "claude-opus-4-8"  # latest, most capable model
+CLAUDE_MODEL = "claude-sonnet-4-6"  # balanced speed/intelligence; supports adaptive thinking
 
 # --- Stock media (Pexels — free tier, 200 req/hr) ---
 # Get a key at https://www.pexels.com/api/
@@ -33,15 +33,6 @@ VIDEO_HEIGHT = 1920
 MAX_DURATION_SECONDS = 30   # hard cap — videos are trimmed to this length
 TARGET_DURATION_SECONDS = 25  # aim point for narration length (20-30s sweet spot)
 FPS = 30
-
-# --- Voice (TTS) ---
-# "elevenlabs" for natural AI voice (needs ELEVENLABS_API_KEY), else "gtts" (free, robotic).
-# If elevenlabs is selected but the key/library is missing, it auto-falls back to gTTS.
-TTS_PROVIDER = os.environ.get("TTS_PROVIDER", "elevenlabs")
-ELEVENLABS_API_KEY = os.environ.get("ELEVENLABS_API_KEY", "")
-# A warm, clear English voice. "Rachel" is a good default ElevenLabs preset voice id.
-ELEVENLABS_VOICE_ID = os.environ.get("ELEVENLABS_VOICE_ID", "21m00Tcm4TlvDq8ikWAM")
-ELEVENLABS_MODEL = "eleven_multilingual_v2"
 
 # --- Background music (optional) ---
 # Drop royalty-free .mp3 files into assets/music/. One is picked at random and
