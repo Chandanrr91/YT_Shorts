@@ -201,7 +201,7 @@ def _caption_clips(narration, duration, font):
         txt = TextClip(
             font=font,
             text=phrase,
-            font_size=58,
+            font_size=48,
             color="white",
             stroke_color="black",
             stroke_width=3,
