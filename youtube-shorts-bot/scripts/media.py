@@ -212,7 +212,7 @@ def _caption_clips(narration, duration, font):
         txt = (
             txt.with_start(t)
             .with_duration(seg)
-            .with_position(("center", int(settings.VIDEO_HEIGHT * 0.62)))
+            .with_position(("center", int(settings.VIDEO_HEIGHT * 0.6)))
         )
         clips.append(txt)
         t += seg
