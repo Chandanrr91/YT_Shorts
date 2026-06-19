@@ -42,7 +42,7 @@ MUSIC_VOLUME = 0.12  # 0.0-1.0, kept low so narration stays clear
 MUSIC_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "assets", "music")
 
 # --- Visual style ---
-CLIPS_PER_VIDEO = 3        # number of different stock clips to rotate through
+CLIPS_PER_VIDEO = 4        # number of different stock clips to rotate through
 SHOW_TITLE_CARD = True     # 2.5s title card at the start
 KEN_BURNS = True           # slow zoom on each clip for motion
 
