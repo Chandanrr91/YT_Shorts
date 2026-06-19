@@ -201,12 +201,12 @@ def _caption_clips(narration, duration, font):
         txt = TextClip(
             font=font,
             text=phrase,
-            font_size=48,
+            font_size=52,
             color="white",
             stroke_color="black",
             stroke_width=3,
             method="caption",
-            size=(int(settings.VIDEO_WIDTH * 0.80), None),
+            size=(int(settings.VIDEO_WIDTH * 0.90), None),
             text_align="center",
         )
         txt = (
